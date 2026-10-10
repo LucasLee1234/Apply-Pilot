@@ -224,11 +224,15 @@ The application management module will be expanded after the basic functionality
 
 The complete set of application statuses and further management features have not yet been defined.
 
-## 6. Initial Development Scope: Resumes
+## 6. Initial Development Scope: Application Documents
+
+Application document management must cover user-provided files to be uploaded during applications, including resumes, cover letters, transcripts, and certificates. Applicant information management handles the data entered into form fields; document management handles the uploaded attachments. Facts extracted from a document and confirmed by the user belong to applicant information management, while the original file belongs to document management.
 
 The initial development scope does not require agents to generate resumes from personal information.
 
 Users provide multiple resumes themselves. The AI selects the appropriate user-provided resume according to the application context.
+
+The resume selection rules below apply specifically to resumes. Selection and usage rules for other document types will be defined during detailed module design.
 
 ### 6.1. Resume Selection by Filename and Job Information
 
@@ -240,15 +244,15 @@ For example, a user may provide `name_ai_resume.pdf` for AI positions and `name_
 
 When the system cannot select an appropriate resume, it must ask the user to choose and confirm a resume or add a new resume.
 
-### 6.3. Resume Modification, Renaming, and Deletion
+### 6.3. Document Modification, Renaming, and Deletion
 
-Users must be able to modify, rename, and delete resumes, subject to user approval for changes to user information.
+Users must be able to upload, modify, rename, and delete application documents, subject to user approval for changes to user information.
 
-- **Soft deletion:** Display the resume as deleted to the user and mark it as unavailable for future use. Retain the stored file so historical application records can still access it.
-- **Permanent deletion:** Inform the user which application records will be affected and obtain confirmation before permanently deleting the resume. Mark the corresponding file in affected records as deleted.
-- **Renaming:** Update the resume's name in associated application records.
+- **Soft deletion:** Display the document as deleted to the user and mark it as unavailable for future use. Retain the stored file so historical application records can still access it.
+- **Permanent deletion:** Inform the user which application records will be affected and obtain confirmation before permanently deleting the document. Mark the corresponding file in affected records as deleted.
+- **Renaming:** Update the document's name in associated application records.
 
-When a resume is modified, the old version must be retained for historical application records so that the user can review the resume that was actually submitted. The previously defined permanent deletion behavior still applies when the user chooses to permanently delete a retained resume.
+When a document is modified, the old version must be retained for historical application records so that the user can review the file that was actually submitted. The previously defined permanent deletion behavior still applies when the user chooses to permanently delete a retained document.
 
 ## 7. Future Fully Automatic Mode
 
