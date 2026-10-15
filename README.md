@@ -1,10 +1,10 @@
 # Apply Pilot
 
-Apply Pilot is a personal job application assistant designed to help fill in and submit applications on company career websites, using applicant information and resumes supplied by the user.
+Apply Pilot is a personal job application assistant designed to help fill in and submit applications on company career websites, using applicant information and application documents supplied by the user.
 
 ## Project Status
 
-The project is currently in requirements analysis. Application code has not yet been implemented. The capabilities described below are planned requirements.
+Requirements analysis and overall business module design have been completed. Technology selection and detailed module design are in progress. Application code has not yet been implemented. The capabilities described below are planned requirements.
 
 ## Planned Technology Stack
 
@@ -16,7 +16,8 @@ The project is currently in requirements analysis. Application code has not yet 
 ## Initial Scope
 
 - Manage applicant information through PDF resume extraction and manual entry, with user confirmation before saving extracted information.
-- Start an application from a user-provided LinkedIn job URL and locate the company's application page.
+- Start an application from a user-provided LinkedIn job URL or company recruitment page and locate the company's external application page. LinkedIn on-platform applications are excluded.
+- Manage application attachments, including resumes, cover letters, transcripts, and certificates, with version retention and deletion controls.
 - Select a user-uploaded resume using its filename and the job information.
 - Fill forms using confirmed information, including supported combinations, splits, and calculations of stored data.
 - Ask the user for missing information, conflicting data decisions, and answers to non-factual questions. The AI must not draft non-factual answers.
@@ -35,7 +36,10 @@ A fully automatic job search, matching, and application mode may be considered a
 
 ## Documentation
 
-- [Requirements](docs/requirements.md): confirmed requirements and deferred scope.
+- [Requirements](docs/requirements/requirements.md): confirmed requirements and deferred scope.
+- [Overall Analysis](docs/design/overall-analysis.md): business modules and collaboration.
+- [Technology Stack](docs/design/technology-stack.md): confirmed choices and pending decisions.
+- [Detailed Design](docs/detailed-design/README.md): module specifications and status.
 - [Documentation Guide](docs/README.md): purpose of the documentation directory.
 
 All project documentation is written in English and kept in `docs/`.
@@ -47,5 +51,7 @@ Apply-Pilot/
 ├── README.md
 └── docs/
     ├── README.md
-    └── requirements.md
+    ├── requirements/
+    ├── design/
+    └── detailed-design/
 ```

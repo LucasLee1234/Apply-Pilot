@@ -60,7 +60,7 @@ When the user clicks Save, the system must check whether the information is miss
 
 ### 2.4. Information Storage Scope
 
-The applicant knowledge base must save objective factual information related to job applications, rather than subjective answers written by the user. User account identifiers and passwords must not be saved, and verification codes must not be recorded. Other information within the defined storage scope must be saved with user approval.
+The applicant knowledge base must save objective factual information related to job applications and user-confirmed job preferences. Non-fixed preferences, such as desired compensation, belong in the supplemental information stored and retrieved through RAG. Subjective narrative answers written for individual applications remain excluded from this reusable knowledge base. User account identifiers and passwords must not be saved, and verification codes must not be recorded. Other information within the defined storage scope must be saved with user approval.
 
 The detailed personal information fields will be defined during system design.
 
@@ -100,7 +100,7 @@ The system must find relevant information in the stored applicant data and adapt
 
 - **Direct matching:** If the stored gender is male and the form asks for gender, the system can use the stored value.
 - **Combining and splitting:** The system must be able to combine or split stored information to match the form's fields when the result is certain. For example, if the stored first name is `hong` and last name is `li`, the system can combine them in a single field requesting both names, using the format required by the form.
-- **Calculation:** The system must be able to calculate a requested value from stored information. Age calculations must use a complete date of birth, including year, month, and day, to determine accurate age. If the stored date of birth lacks any of these components, the system must ask the user for the missing information rather than estimate age from the birth year alone.
+- **Calculation:** The system must be able to calculate a requested value from stored information. Date of birth, including year, month, and day, is the input used to calculate accurate age; age is a derived result rather than a separately maintained input. If the stored date of birth lacks any of these components, the system must ask the user for the missing information rather than estimate age from the birth year alone.
 
 ### 3.4. Missing Information and Human-in-the-Loop Completion
 

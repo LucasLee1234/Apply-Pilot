@@ -19,7 +19,7 @@ This document describes the six business modules agreed upon for Apply Pilot. It
 
 **Boundary**
 
-This module maintains reusable objective facts. Subjective application answers belong in the corresponding application record, rather than the applicant knowledge base. Account information, passwords, and verification codes are excluded from persistent storage according to the requirements.
+This module maintains reusable objective facts and user-confirmed job preferences. Non-fixed preferences, such as desired compensation, belong in the supplemental RAG information. Subjective narrative application answers belong in the corresponding application record, rather than the applicant knowledge base. Account information, passwords, and verification codes are excluded from persistent storage according to the requirements.
 
 This module manages data to be entered into application form fields. Application document management manages the files to be uploaded as attachments. A resume may participate in both flows: its original file belongs to document management, while facts extracted from it and confirmed by the user belong to applicant information management.
 
