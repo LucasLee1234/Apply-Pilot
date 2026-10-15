@@ -15,6 +15,7 @@ Requirements analysis and overall business module design have been completed. Te
 
 ## Initial Scope
 
+- Provide basic Apply Pilot registration and login using a username and password, with user-linked applicant drafts retained in Redis for seven days.
 - Manage applicant information through PDF resume extraction and manual entry, with user confirmation before saving extracted information.
 - Start an application from a user-provided LinkedIn job URL or company recruitment page and locate the company's external application page. LinkedIn on-platform applications are excluded.
 - Manage application attachments, including resumes, cover letters, transcripts, and certificates, with version retention and deletion controls.
@@ -30,7 +31,7 @@ The initial version is for the project owner's use only. Cloud deployment may fo
 
 ## Future Scope
 
-Future work includes additional job sources such as Handshake and Indeed, expanded application record management, and task validation and duplicate application checks for broader use. Public availability would require additional privacy management and login functionality.
+Future work includes additional job sources such as Handshake and Indeed, expanded application record management, and task validation and duplicate application checks for broader use. Public availability would require additional privacy and public-access management beyond the initial basic login functionality.
 
 A fully automatic job search, matching, and application mode may be considered after the basic functionality and application management expansion are complete.
 

@@ -10,7 +10,7 @@ Apply Pilot helps job seekers automatically fill in and submit job application i
 
 The first version is for the project owner's personal use only. After successful testing, the system may be deployed to a cloud server, with access restricted to the project owner.
 
-Public availability is a future possibility. Before public availability, additional privacy management and system login functionality must be added. Their detailed requirements have not yet been defined.
+Public availability is a future possibility. Basic system registration and login are now part of the initial scope. Additional privacy and public-access management remain future work; their detailed requirements have not yet been defined.
 
 ### 1.2. Supported Job Sources
 
@@ -23,6 +23,20 @@ LinkedIn on-platform applications are not supported. LinkedIn serves as the job 
 Support for Handshake, Indeed, and other job sources belongs to future development.
 
 ## 2. Applicant Information
+
+### System Registration and Login
+
+The initial version must provide simple username/password registration and login for Apply Pilot itself. At registration, generate a stable user ID and create an account record in a PostgreSQL table named `user`, containing the ID, username, and password hash. Use the same ID for applicant drafts and formal profile storage. After logging in again, the user must be able to retrieve their unexpired draft by this ID.
+
+The initial version permits only one active device login per user; multi-device support is deferred. A successful new login replaces the previous session and signs out the previous device. Store the active session in Redis and resolve the current user through the validated session for each relevant request or operation. Logout invalidates the session. It expires after 10 hours without authenticated user activity; user operations or page access refresh its idle expiration. Missing or expired sessions require login again for protected access. Session expiration does not delete the account, saved applicant information, or seven-day applicant draft.
+
+Apply Pilot's own authentication is separate from credentials for company or recruitment websites. The existing prohibition on storing job-site account identifiers, passwords, and verification codes remains in force. Apply Pilot must not store its own login passwords in plaintext; use password hashes for authentication. Detailed authentication design is pending.
+
+Incomplete applicant information may be saved as JSON drafts in Redis for seven days. A complete profile is created in PostgreSQL only after the required information is complete and formal saving is approved. The authentication account and applicant profile are separate records, associated with the same user ID.
+
+Unconfirmed profile modifications and incorrectly formatted values may be saved as Redis drafts. Validate the complete proposed profile before SQL saving. Successful SQL saving deletes the corresponding draft and counts as formal-save success independently of RAG. If SQL saving fails, retain the draft and report the reason for correction. Use formal profile information as authoritative and ask the user before resolving conflicting proposed changes. JSON operation results, including agent tool results, use the shared `success`, `data`, and `error` envelope defined in [Shared Response Format](../design/response-format.md).
+
+Structured information and supplemental information have separate saving operations. The profile page presents structured fields above a large free-text box for additional information. Structured fields are saved to SQL, while approved supplemental information is saved independently through the RAG flow. A failed RAG write must retain its own pending contents for retry and must not affect the SQL save result or be deleted by SQL draft cleanup.
 
 Users must be able to save the information needed to apply for jobs in the system, including:
 
@@ -64,7 +78,7 @@ The applicant knowledge base must save objective factual information related to 
 
 The detailed personal information fields will be defined during system design.
 
-Login email addresses must not be saved as account information. Email addresses required as applicant information in application forms may be saved. The system must support multiple applicant email addresses with distinct purposes, such as a contact email and a response email. If no separate purpose is specified, the same email address is used for those purposes.
+Login email addresses must not be saved as account information. The initial version stores one applicant email address in a field named Default Email for application forms. Multiple email addresses and purpose-specific email handling are deferred to future development.
 
 ## 3. Application Entry and Form Completion
 

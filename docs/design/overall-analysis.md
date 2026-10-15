@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This document describes the six business modules agreed upon for Apply Pilot. It defines their responsibilities and collaboration at a high level. Detailed data fields, implementation choices, and agent assignments will be addressed during subsequent design.
+This document describes the six core business modules agreed upon for Apply Pilot and the supporting registration and login module added to the initial scope. It defines their responsibilities and collaboration at a high level. Detailed data fields, implementation choices, and agent assignments will be addressed during subsequent design.
 
 ## 2. Business Modules
 
@@ -19,7 +19,7 @@ This document describes the six business modules agreed upon for Apply Pilot. It
 
 **Boundary**
 
-This module maintains reusable objective facts and user-confirmed job preferences. Non-fixed preferences, such as desired compensation, belong in the supplemental RAG information. Subjective narrative application answers belong in the corresponding application record, rather than the applicant knowledge base. Account information, passwords, and verification codes are excluded from persistent storage according to the requirements.
+This module maintains reusable objective facts and user-confirmed job preferences. Non-fixed preferences, such as desired compensation, belong in the supplemental RAG information. Subjective narrative application answers belong in the corresponding application record, rather than the applicant knowledge base. Job-site account information, passwords, and verification codes are excluded from persistent storage. Apply Pilot's own username and password hash are handled separately by registration and login.
 
 This module manages data to be entered into application form fields. Application document management manages the files to be uploaded as attachments. A resume may participate in both flows: its original file belongs to document management, while facts extracted from it and confirmed by the user belong to applicant information management.
 
@@ -110,6 +110,14 @@ Historical records retain what was submitted for that application, separately fr
 
 Expanded management of interviews, acceptance, and rejection is deferred until the basic functionality is complete.
 
+### 2.7. Supporting Module: Registration and Login
+
+Provide simple username/password registration and login for Apply Pilot. At registration, generate a user ID and create a PostgreSQL `user` record containing the ID, username, and password hash. Supply the authenticated identity used to retrieve seven-day Redis drafts and associate formal applicant information with the same user.
+
+The initial version supports one active device login per user, with multi-device support deferred. Successful new login replaces the previous device's session. Store the session in Redis. Other modules resolve the current user from a validated session for the relevant operation. Logout invalidates the session; user operations and access refresh a 10-hour idle expiration. Session invalidation does not remove seven-day applicant drafts or stored profile data.
+
+This module manages system accounts, not accounts on company application websites. Store password hashes rather than plaintext passwords. Account validation rules are recorded in the authentication specification. Session identifier transport, concurrent updates, ID format, and exact table schema remain to be designed.
+
 ## 3. Collaboration Principles
 
 - Applicant information management supplies reusable facts; application document management supplies files.
@@ -134,7 +142,10 @@ flowchart TD
     E[Application Execution and Human Collaboration]
     R[Application Review and Submission]
     H[Application Record Management]
+    A[Registration and Login]
 
+    U -->|Register or log in| A
+    A -->|Authenticated user ID for profile and draft lookup| P
     U -->|Job URL and application request| J
     J -->|Recruitment information and application entry| E
     J -->|Login or verification handoff| U

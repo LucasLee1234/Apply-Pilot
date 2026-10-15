@@ -27,7 +27,7 @@ This document records technology choices confirmed by the project owner. Impleme
 | Browser automation | Playwright MCP | Initially a local visible browser; frontend integration later. |
 | Supplemental retrieval | RAG backed by OpenSearch | Supplemental facts and user-confirmed non-fixed preferences. |
 | Embedding model | OpenAI `text-embedding-3-small` | Initial lower-cost choice; reassess if retrieval quality is insufficient. |
-| Redis | Selected for future integration | Purpose and integration timing remain undecided. |
+| Redis | Applicant drafts and login sessions | Seven-day JSON profile drafts; one active device login per user. Logout or 10 hours of inactivity invalidates the session; user operations/access refresh it. |
 | CI/CD | Jenkins | Pipeline checks, triggers, hosting, and deployment details remain to be designed. |
 
 ## 3. Database Access Boundary
@@ -36,9 +36,17 @@ Applicant information management encapsulates its database connection and access
 
 The module continues to enforce validation, conflict handling, and user approval for additions, modifications, and deletions. The database driver, any ORM, migration tooling, and connection lifecycle have not yet been selected. The frontend accesses backend APIs rather than connecting directly to PostgreSQL.
 
+### 3.1. Draft Storage
+
+The system must allow incomplete applicant information to be saved as a JSON draft in Redis for seven days. Registration generates a user ID and creates a PostgreSQL `user` record containing the ID, username, and password hash. Associate drafts with this ID and retrieve an unexpired draft by the authenticated user's ID after restarting or reopening the system. Do not create the applicant profile in PostgreSQL while it is incomplete. When the information is complete and approved for formal saving, use the same user ID for PostgreSQL storage. An authentication account is separate from a complete applicant profile; account creation does not require creating an incomplete profile.
+
+Unconfirmed profile edits may also be saved in Redis, including incorrectly formatted values. Apply full field validation before SQL saving. After successful SQL saving, delete only the corresponding SQL profile draft version; SQL failure must retain it and return a reason for correction. RAG saving is a separate operation with its own result and retained pending contents on failure; SQL draft cleanup must not remove them. Formal profile data is authoritative, and conflicting proposed changes require user resolution. Whether editing restarts the seven-day period, Redis persistence configuration, and RAG retry details remain to be designed. This draft is applicant information, not a resumable browser application task.
+
 ## 4. Structured Information and RAG
 
 Common structured information, such as names and standard applicant fields, belongs in PostgreSQL. These fields do not need to be duplicated in the supplemental collection merely for RAG.
+
+The profile page shows the structured form above a large free-text box for any supplemental information the user wishes to provide. The form and supplemental box use separate save operations: SQL for structured fields, and RAG for approved supplemental information. They do not form a combined save transaction.
 
 Some application questions require uncommon facts not represented by the common SQL fields. When the user supplies such information and chooses to save it, its description or summary is intended to be stored for retrieval through OpenSearch. OpenAI `text-embedding-3-small` generates the embeddings.
 
@@ -68,7 +76,8 @@ OpenSearch provides storage and retrieval, while the embedding model converts te
 | Frontend browser display and takeover | Start locally; frontend integration later. |
 | Database driver, ORM, and migrations | Not selected. |
 | OpenSearch deployment and persistence | Not selected. |
-| Redis responsibilities | Not selected. |
+| Redis draft lifecycle | Seven-day drafts permit incomplete or incorrectly formatted values; validate before SQL saving. Delete after SQL success, retain on SQL failure. Expiration refresh, restart persistence, and concurrent edits remain open. |
+| System authentication implementation | PostgreSQL `user` accounts and Redis sessions; a successful new login replaces the old device's session. Case-sensitive unique usernames; passwords 10-30 characters inclusive with letters, digits, and special characters. ID/schema details, character sets, session transport, and hashing remain open. |
 | Exact runtime and dependency versions | Pin during project initialization. |
 | Configuration and secrets handling | Design before implementing dependent components. |
 | LangSmith trace contents | Define permitted data and enforce storage exclusions. |
